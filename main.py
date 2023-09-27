@@ -3,6 +3,7 @@ import rules
 import report
 import logging
 import re
+import asyncio  
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
@@ -31,7 +32,7 @@ filters_db = {}
 reporting_status = {}
 chat_rules = {}
 BAD_WORDS = {}  # Format: {chat_id: set_of_bad_words}
-BAN_COUNT = 3  # Default value
+BAN_COUNT = 4  # Default value
 USER_COUNTS = {}  # Format: {chat_id: {user_id: count}}
 
 
@@ -89,8 +90,8 @@ inline_kb.add(*buttons)
 
 # Welcome message with the inline keyboard attached
 welcome_message = (
-    "🎉 <b>Hello, {mention}! Welcome to Hitly commmunity </b>\n\n"
-    "🌐 Check out our social media presence\n\n"
+    "🎉 <b>ᗯEᒪᑕOᗰE, {mention}! ᗯEᒪᑕOᗰE TO Oᑌᖇ GᖇOᑌᑭ </b>\n\n"
+    "🌐 𝐂𝐡𝐞𝐜𝐤 𝐨𝐮𝐭 𝐨𝐮𝐫 𝐬𝐨𝐜𝐢𝐚𝐥 𝐦𝐞𝐝𝐢𝐚 𝐩𝐫𝐞𝐬𝐞𝐧𝐜𝐞⟿\n\n"
 )
 
 @dp.message_handler(content_types=['new_chat_members'])
@@ -221,12 +222,20 @@ async def check_bad_words(message: types.Message):
     USER_COUNTS[chat_id][user_id] = user_count
 
     await bot.delete_message(chat_id, message.message_id)
-    await bot.send_message(chat_id, f"@{message.from_user.username} used bad words\nCount: {user_count}/4 ")
-
+    
+    # Send and then delete after 5 seconds
+    msg = await bot.send_message(chat_id, f"@{message.from_user.username} used bad words\nCount: {user_count}/4 ")
+    await asyncio.sleep(5)
+    await bot.delete_message(chat_id, msg.message_id)
 
     if user_count >= BAN_COUNT:
         await bot.kick_chat_member(chat_id, user_id)
-        await message.reply(f"Banned @{message.from_user.username} for using bad words too many times.")
+        
+        # Send and then delete after 5 seconds
+        msg = await message.reply(f"Banned @{message.from_user.username} for using bad words too many times.")
+        await asyncio.sleep(5)
+        await bot.delete_message(chat_id, msg.message_id)
+
         del USER_COUNTS[chat_id][user_id]  # Reset the count for the banned user
 
 
@@ -482,14 +491,17 @@ async def handle_text(message: types.Message):
         link_counts.setdefault(chat_id, {}).setdefault(user_id, 0)
         link_counts[chat_id][user_id] += 1
 
-        await message.delete()
+        await bot.delete_message(chat_id, message.message_id)
+        
+        # Send and then delete after 5 seconds
+        msg = await bot.send_message(chat_id, f"Sending link is prohibited in this chat.\n@{message.from_user.username} sent link {link_counts[chat_id][user_id]}/4 times")
+        await asyncio.sleep(5)
+        await bot.delete_message(chat_id, msg.message_id)
 
         if link_counts[chat_id][user_id] >= LINK_BAN_COUNT:
             await bot.kick_chat_member(chat_id, user_id)
             await bot.send_message(chat_id, f"@{message.from_user.username} was banned for sending links too many times.")
-            del link_counts[chat_id][user_id]  # Reset the count for the banned user
-        else:
-            await bot.send_message(chat_id, f"Sending link is prohibited in this chat.\n@{message.from_user.username} sent link {link_counts[chat_id][user_id]}/4 times")
+            del link_counts[chat_id][user_id]  
         
 if __name__ == '__main__':
     pyro_client.start()  # Start the Pyrogram client here
