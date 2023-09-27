@@ -1,0 +1,4 @@
+Pyrogram
+TgCrypto
+aiogram==2.25.1
+dotenv
