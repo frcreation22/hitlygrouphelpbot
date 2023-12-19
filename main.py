@@ -19,7 +19,7 @@ api_id = '18647671'
 api_hash = "be6fb9e02ac9b9d898f944d9351f95e2"
 pyro_client = Client("main", api_id=api_id, api_hash=api_hash)
 
-aiogram_bot_token = '6534767620:AAEK9eTLUruSQ1B4x8CX-jdypwQwnjGlFmE'
+aiogram_bot_token = '6534767620:AAFdbxpfAb4aNW2eP-ACVYo0clyTLKZq6bw'
 bot = Bot(token=aiogram_bot_token)
 dp = Dispatcher(bot)
 dp.middleware.setup(LoggingMiddleware())
