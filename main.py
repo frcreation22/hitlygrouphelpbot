@@ -84,7 +84,6 @@ buttons = [
     InlineKeyboardButton("Telegram Group", url="https://t.me/hitly_official"),
     InlineKeyboardButton("Twitter", url="https://twitter.com/Hitlyofficial"),
     InlineKeyboardButton("Website", url="https://hitly.live/"),
-    InlineKeyboardButton("Airdrop", url="https://hitly.live/airdrop")
 ]
 inline_kb.add(*buttons)
 
