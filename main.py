@@ -82,7 +82,7 @@ inline_kb = InlineKeyboardMarkup(row_width=2)
 buttons = [
     InlineKeyboardButton("Telegram Channel", url="https://t.me/hitlyofficial"),
     InlineKeyboardButton("Telegram Group", url="https://t.me/hitly_official"),
-    InlineKeyboardButton("Twitter", url="https://twitter.com/Hitlyofficial"),
+    InlineKeyboardButton("Twitter", url="https://x.com/Hitly_Community"),
     InlineKeyboardButton("Website", url="https://hitly.live/"),
 ]
 inline_kb.add(*buttons)
